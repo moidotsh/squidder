@@ -9,6 +9,10 @@ apt update
 echo "Installing squid, apache2-utils, and mosh"
 apt install -y squid apache2-utils mosh
 
+echo "Stopping squid that auto-started during install"
+systemctl stop squid.service 2>/dev/null || true
+rm -f /run/squid.pid
+
 echo "Clearing conf.d drop-in configs to prevent conflicts"
 rm -f /etc/squid/conf.d/*.conf
 
@@ -23,10 +27,6 @@ squid -z
 
 echo "Creating user jihane in password file"
 htpasswd -bc /etc/squid/passwords jihane "$PASSWORD"
-
-echo "Stopping any existing squid process and removing stale PID file"
-systemctl stop squid.service 2>/dev/null || true
-rm -f /run/squid.pid
 
 echo "Restarting squid service"
 if ! systemctl restart squid.service; then
