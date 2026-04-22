@@ -28,6 +28,9 @@ squid -z
 echo "Creating user jihane in password file"
 htpasswd -bc /etc/squid/passwords jihane "$PASSWORD"
 
+echo "Cleaning up stale PID file from squid -z"
+rm -f /run/squid.pid
+
 echo "Restarting squid service"
 if ! systemctl restart squid.service; then
     echo "ERROR: squid failed to start"
